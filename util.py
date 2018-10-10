@@ -3,6 +3,7 @@ import win32api
 import win32con
 import win32gui
 import win32ui
+import logging
 def sleep(time):
     win32api.Sleep(time)
 
@@ -16,14 +17,23 @@ def get_location(img1,img2):
 
     res = cv2.matchTemplate(imgsr, imgtm, cv2.TM_CCOEFF_NORMED)
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
-    img = cv2.rectangle(imgsr, max_loc, (max_loc[0] + imgtmw1, max_loc[1] + imgtmh1), (0, 0, 255), 2)
-    cv2.imshow("Image",img)
-    cv2.waitKey(0)
+  #  img = cv2.rectangle(imgsr, max_loc, (max_loc[0] + imgtmw1, max_loc[1] + imgtmh1), (0, 0, 255), 2)
+   # cv2.imshow("Image",img)
+    #cv2.waitKey(0)
     x = (max_loc[0] + max_loc[0] + imgtmw1) // 2
     y = (max_loc[1] + max_loc[1] + imgtmh1) // 2
     return x,y
 
 def find_window():
+    logging.basicConfig(level=logging.DEBUG,  # 控制台打印的日志级别
+                        filename='new.log',
+                        filemode='a',  ##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
+                        # a是追加模式，默认如果不写的话，就是追加模式
+                        format=
+                        '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
+                        # 日志格式
+                        )
+    logging.info("asdasd")
     name = input("请输入模拟器的序列")
     classname = "Qt5QWindowIcon"
     firstname = "夜神模拟器"
@@ -71,13 +81,15 @@ def screen_shot(hwnd,name):
     saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
     saveDC.SelectObject(saveBitMap)
 
-    img_dc =mfcDC
-    mem_dc =saveDC
+    img_dc = mfcDC
+    mem_dc = saveDC
     mem_dc.BitBlt((0, 0), (w, h), img_dc, (0, 0), win32con.SRCCOPY)
 
-    saveBitMap.SaveBitmapFile(mem_dc, 'temp\\'+name+'\\screenshot.png')
+    saveBitMap.SaveBitmapFile(mem_dc, 'temp\\' + name + '\\screenshot.png')
+
     win32gui.DeleteObject(saveBitMap.GetHandle())
     saveDC.DeleteDC()
     mfcDC.DeleteDC()
     win32gui.ReleaseDC(hwnd, hwndDC)
+
     return 1
